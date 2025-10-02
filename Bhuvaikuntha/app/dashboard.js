@@ -21,13 +21,16 @@ const scale = (size) => (width / 375) * size;
 
 // ✅ Reusable Header Component
 const AppHeader = () => {
+    const router = useRouter();
   return (
     <SafeAreaView edges={["top"]} style={{ backgroundColor: "#FF6600" }}>
       <View style={styles.header}>
-        <Image
-          source={require("../assets/images/icon.png")}
-          style={styles.profile}
-        />
+        <TouchableOpacity onPress={() => router.push("/profile")}>
+          <Image
+            source={require("../assets/images/icon.png")}
+            style={styles.profile}
+          />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Welcome, Jagannath</Text>
         <Ionicons name="notifications-outline" size={22} color="#fff" />
       </View>
@@ -43,7 +46,7 @@ export default function HomeScreen() {
   const quickAccess = [
     { id: "1", title: "Daily Darshan", image: require("../assets/images/icon.png"), path: "/daily-darshan" },
     { id: "2", title: "My Donations", image: require("../assets/images/icon.png"), path: "/my-donations" },
-    { id: "3", title: "Temple Updates", image: require("../assets/images/icon.png"), path: "/updates" },
+    { id: "3", title: "Temple Updates", image: require("../assets/images/icon.png"), path: "/temple" },
     { id: "4", title: "Live Darshan", image: require("../assets/images/icon.png"), path: "/live_darshan" },
     { id: "5", title: "Anna Daan Seva", image: require("../assets/images/icon.png"), path: "/anna-daan" },
     { id: "6", title: "Offer Your Seva", image: require("../assets/images/icon.png"), path: "/offer-seva" },

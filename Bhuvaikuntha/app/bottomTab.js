@@ -10,7 +10,7 @@ export default function BottomNav() {
   const tabs = [
     { name: "Home", icon: "home", path: "/dashboard" },
     { name: "Darshan", icon: "image", path: "/darshan" },
-    { name: "Donate", icon: "gift", path: "/donate" },
+    { name: "Donate", icon: "gift", path: "/donate_now" },
     { name: "Seva", icon: "calendar", path: "/offer_seva" },
     { name: "Temple", icon: "document", path: "/temple" },
   ];

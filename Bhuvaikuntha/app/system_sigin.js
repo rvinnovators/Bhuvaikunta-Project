@@ -68,7 +68,7 @@ export default function LoginScreen() {
       });
 
       if (result.success) {
-        router.push("/home");
+        router.push("/dashboard");
       } else {
         Alert.alert("Failed", "Face ID authentication failed!");
       }
