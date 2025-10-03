@@ -10,16 +10,20 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
+import { useRouter } from "expo-router";
+
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
+import { StatusBar } from "expo-status-bar"; // ✅ use expo-status-bar
 
 const { width } = Dimensions.get("window");
 const scale = (size) => (width / 375) * size; // Responsive scaling
 
 export default function EditProfileScreen() {
+    const router = useRouter();
+  
   const [dob, setDob] = useState(new Date(2000, 4, 23));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [country, setCountry] = useState("India");
@@ -46,17 +50,21 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
+      {/* ✅ Status Bar */}
+      <StatusBar style="light" backgroundColor="#FF6600" />
+
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={scale(22)} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>
         <View style={{ width: scale(22) }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
+      {/* Content */}
+      <ScrollView contentContainerStyle={styles.content}>
         {/* Profile Image */}
         <View style={styles.profileContainer}>
           <Image
@@ -84,9 +92,7 @@ export default function EditProfileScreen() {
             style={styles.inputWrapper}
             onPress={() => setShowDatePicker(true)}
           >
-            <Text style={styles.input}>
-              {dob.toLocaleDateString("en-GB")}
-            </Text>
+            <Text style={styles.input}>{dob.toLocaleDateString("en-GB")}</Text>
             <Ionicons name="calendar" size={scale(18)} color="#FF6600" />
           </TouchableOpacity>
         </View>
@@ -151,7 +157,7 @@ export default function EditProfileScreen() {
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -166,32 +172,31 @@ const Input = ({ label, value, icon, dropdown, style }) => (
         placeholderTextColor="#888"
       />
       {icon && <Ionicons name={icon} size={scale(18)} color="#FF6600" />}
-      {dropdown && (
-        <Ionicons name="chevron-down" size={scale(18)} color="#FF6600" />
-      )}
+      {dropdown && <Ionicons name="chevron-down" size={scale(18)} color="#FF6600" />}
     </View>
   </View>
 );
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: "#fff",
   },
   header: {
-    height: scale(56),
-    backgroundColor: "#FF6600",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: "#FF6600",
     paddingHorizontal: scale(16),
+    paddingTop: scale(40), // ✅ space for notch/status bar
+    paddingBottom: scale(14),
   },
   headerTitle: {
     fontSize: scale(18),
     fontWeight: "600",
     color: "#fff",
   },
-  container: {
+  content: {
     padding: scale(16),
     paddingBottom: scale(40),
   },

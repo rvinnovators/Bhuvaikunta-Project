@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "expo-router";
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const router = useRouter(); // ✅ FIX
+  const router = useRouter();
 
   const tabs = [
     { name: "Home", icon: "home", path: "/dashboard" },
@@ -16,87 +16,77 @@ export default function BottomNav() {
   ];
 
   return (
-    <View style={styles.bottomNav}>
-      {tabs.map((tab) => {
-        const isActive = pathname === tab.path;
+    <View style={styles.bottomNavWrapper}>
+      <View style={styles.bottomNav}>
+        {tabs.map((tab) => {
+          const isActive = pathname === tab.path;
 
-        return (
-          <TouchableOpacity
-            key={tab.name}
-            style={styles.navItem}
-            onPress={() => router.replace(tab.path)} // ✅ uses router from hook
-            activeOpacity={0.7}
-          >
-            {isActive ? (
-              <View style={styles.activeWrapper}>
+          return (
+            <TouchableOpacity
+              key={tab.name}
+              style={styles.navItem}
+              onPress={() => router.push(tab.path)}
+              activeOpacity={0.7}
+            >
+              {isActive ? (
                 <View style={styles.activeCircle}>
                   <Ionicons name={tab.icon} size={22} color="#fff" />
                 </View>
-              </View>
-            ) : (
-              <Ionicons name={tab.icon} size={22} color="#666" />
-            )}
+              ) : (
+                <Ionicons name={tab.icon} size={22} color="#fff" />
+              )}
 
-            <Text
-              style={[
-                styles.navText,
-                {
-                  color: isActive ? "#FF6600" : "#666",
-                  marginTop: isActive ? 32 : 4,
-                },
-              ]}
-            >
-              {tab.name}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+              <Text
+                style={[
+                  styles.navText,
+                  { color: isActive ? "#FF6600" : "#fff" },
+                ]}
+              >
+                {tab.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomNavWrapper: {
+    backgroundColor: "#fff", // outer white background
+    paddingBottom: 10,
+  },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "flex-end",
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    backgroundColor: "#fff",
-    height: 70,
-    paddingBottom: 12,
+    alignItems: "center",
+    marginHorizontal: 16,
+    backgroundColor: "#111", // black rounded bar
+    borderRadius: 12,
+    paddingVertical: 8,
   },
 
   navItem: {
     alignItems: "center",
-    justifyContent: "flex-end",
-    flex: 1,
-  },
-
-  activeWrapper: {
-    position: "absolute",
-    top: -25, // circle floats half out
-    alignItems: "center",
     justifyContent: "center",
+    flex: 1,
   },
 
   activeCircle: {
     backgroundColor: "#FF6600",
-    width: 55,
-    height: 55,
-    borderRadius: 28,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    marginBottom: 4,
   },
 
   navText: {
     fontSize: 12,
     fontWeight: "600",
     textAlign: "center",
+    marginTop: 2,
   },
 });
