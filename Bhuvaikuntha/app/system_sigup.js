@@ -22,6 +22,17 @@ const scale = (size) => (width / 375) * size;
 export default function SignUpScreen() {
   const router = useRouter();
 
+  // 🔹 Form States
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [pin, setPin] = useState("");
+  const [leaderName, setLeaderName] = useState("");
+  const [pan, setPan] = useState("");
+
   const [isChecked, setIsChecked] = useState(false);
   const [dob, setDob] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -32,12 +43,12 @@ export default function SignUpScreen() {
   // Country & State Data
   const countryData = {
     India: [
-      "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-      "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-      "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-      "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan",
-      "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-      "Uttarakhand", "West Bengal"
+      "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
+      "Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
+      "Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
+      "Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan",
+      "Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh",
+      "Uttarakhand","West Bengal"
     ],
     USA: ["California", "Texas", "New York", "Florida", "Illinois"],
     UK: ["England", "Scotland", "Wales", "Northern Ireland"],
@@ -49,6 +60,47 @@ export default function SignUpScreen() {
   const handleConfirm = (date) => {
     setDob(date.toISOString().split("T")[0]); // yyyy-mm-dd format
     hideDatePicker();
+  };
+
+  // 🔹 Signup Function
+  const handleSignUp = async () => {
+    if (!fullName || !email || !password || !phone) {
+      alert("⚠️ Please fill all required fields");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://192.168.1.5:8080/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          phone,
+          dob,
+          country,
+          state,
+          address,
+          city,
+          pin,
+          leaderName,
+          pan: isChecked ? pan : null,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("✅ Account created successfully!");
+        console.log("UID:", data.uid);
+        router.push("./system_sigin");
+      } else {
+        alert("❌ " + data.error);
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      alert("Something went wrong!");
+    }
   };
 
   return (
@@ -83,13 +135,29 @@ export default function SignUpScreen() {
         </View>
 
         {/* Full Name */}
-        <TextInput style={styles.input} placeholder="Full Name*" />
+        <TextInput
+          style={styles.input}
+          placeholder="Full Name*"
+          value={fullName}
+          onChangeText={setFullName}
+        />
 
         {/* Email */}
         <TextInput
           style={styles.input}
-          placeholder="Email Address"
+          placeholder="Email Address*"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+        {/* Password */}
+        <TextInput
+          style={styles.input}
+          placeholder="Password*"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         {/* Mobile */}
@@ -100,6 +168,8 @@ export default function SignUpScreen() {
             placeholder="Enter your Phone Number*"
             keyboardType="phone-pad"
             maxLength={10}
+            value={phone}
+            onChangeText={setPhone}
           />
         </View>
 
@@ -117,53 +187,72 @@ export default function SignUpScreen() {
         />
 
         {/* Address */}
-        <TextInput style={styles.input} placeholder="Address" />
+        <TextInput
+          style={styles.input}
+          placeholder="Address"
+          value={address}
+          onChangeText={setAddress}
+        />
 
         {/* City + PIN */}
         <View style={styles.row}>
-          <TextInput style={[styles.input, styles.halfInput]} placeholder="City" />
+          <TextInput
+            style={[styles.input, styles.halfInput]}
+            placeholder="City"
+            value={city}
+            onChangeText={setCity}
+          />
           <TextInput
             style={[styles.input, styles.halfInput]}
             placeholder="PIN Code"
             keyboardType="numeric"
+            value={pin}
+            onChangeText={setPin}
           />
         </View>
 
-       {/* Country */}
-<View style={styles.dropdownWrapper}>
-  <RNPickerSelect
-    onValueChange={(value) => {
-      setCountry(value);
-      setState("");
-    }}
-    items={Object.keys(countryData).map((c) => ({
-      label: c,
-      value: c,
-    }))}
-    placeholder={{ label: "Select Country", value: "" }}
-    style={pickerSelectStyles}
-    value={country}
-    useNativeAndroidPickerStyle={false}
-  />
-</View>
-{/* State */}
-{country !== "" && (
-  <View style={styles.dropdownWrapper}>
-    <RNPickerSelect
-      onValueChange={(value) => setState(value)}
-      items={(countryData[country] || []).map((s) => ({
-        label: s,
-        value: s,
-      }))}
-      placeholder={{ label: "Select State", value: "" }}
-      style={pickerSelectStyles}
-      value={state}
-      useNativeAndroidPickerStyle={false}
-    />
-  </View>
-)}
+        {/* Country */}
+        <View style={styles.dropdownWrapper}>
+          <RNPickerSelect
+            onValueChange={(value) => {
+              setCountry(value);
+              setState("");
+            }}
+            items={Object.keys(countryData).map((c) => ({
+              label: c,
+              value: c,
+            }))}
+            placeholder={{ label: "Select Country", value: "" }}
+            style={pickerSelectStyles}
+            value={country}
+            useNativeAndroidPickerStyle={false}
+          />
+        </View>
+
+        {/* State */}
+        {country !== "" && (
+          <View style={styles.dropdownWrapper}>
+            <RNPickerSelect
+              onValueChange={(value) => setState(value)}
+              items={(countryData[country] || []).map((s) => ({
+                label: s,
+                value: s,
+              }))}
+              placeholder={{ label: "Select State", value: "" }}
+              style={pickerSelectStyles}
+              value={state}
+              useNativeAndroidPickerStyle={false}
+            />
+          </View>
+        )}
+
         {/* Leader Name */}
-        <TextInput style={styles.input} placeholder="Leader Name" />
+        <TextInput
+          style={styles.input}
+          placeholder="Leader Name"
+          value={leaderName}
+          onChangeText={setLeaderName}
+        />
 
         {/* Checkbox */}
         <View style={styles.checkboxContainer}>
@@ -184,11 +273,16 @@ export default function SignUpScreen() {
 
         {/* PAN Number (visible only when checked) */}
         {isChecked && (
-          <TextInput style={styles.input} placeholder="PAN Number*" />
+          <TextInput
+            style={styles.input}
+            placeholder="PAN Number*"
+            value={pan}
+            onChangeText={setPan}
+          />
         )}
 
         {/* Button */}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
       </ScrollView>
